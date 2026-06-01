@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NexusAI</title>
+<script src="https://js.puter.com/v2/"></script>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="ov" id="ov" onclick="togSB()"></div>
+<aside class="sb shut" id="sb">
+    <div class="sb-top"><h2>NexusAI</h2><button class="nb" onclick="newChat()">+ Novo</button></div>
+    <div class="sb-tabs">
+        <div class="sb-tab on" onclick="showTab(0)">Chats</div>
+        <div class="sb-tab" onclick="showTab(1)">Sala Online</div>
+        <div class="sb-tab" onclick="showTab(2)">Memória</div>
+    </div>
+
+    <!-- Chats -->
+    <div class="sb-panel on" id="pan0"></div>
+
+    <!-- Room -->
+    <div class="sb-panel" id="pan1">
+        <div class="room-sec">
+            <label>Seu nome</label>
+            <input class="room-inp" id="rName" placeholder="Digite seu nome..." value="">
+            <label style="margin-top:8px">Criar sala</label>
+            <button class="room-btn" onclick="createRoom()">Criar sala</button>
+            <label style="margin-top:8px">Ou entrar com código</label>
+            <input class="room-inp" id="rCode" placeholder="Cole o código da sala...">
+            <button class="room-btn" style="background:var(--gn)" onclick="joinRoom()">Conectar</button>
+            <div class="room-info" id="rInfo" style="display:none">
+                <div style="margin-bottom:6px"><b id="rStatus">Conectado</b></div>
+                <label style="margin:0">Código da sala (envie para amigos):</label>
+                <input class="room-inp" id="rMyId" readonly style="margin-top:2px;cursor:pointer;color:var(--ac3)" onclick="navigator.clipboard.writeText(this.value);this.style.borderColor='var(--gn)'">
+                <div style="font-size:8px;color:var(--t3);margin-top:2px">Clique para copiar</div>
+                <div style="margin-top:6px;font-size:9px;color:var(--t2)"><span id="rPeerCount">0</span> conectado(s)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Memory -->
+    <div class="sb-panel" id="pan2">
+        <div class="mem-sec">
+            <div class="mem-toggle"><span>Memória ativa</span><button class="mc-btn" id="memGlobal" onclick="toggleMemGlobal()">ON</button></div>
+            <div class="mem-b" id="mb"><p>Nenhuma informação aprendida.</p></div>
+            <div class="mem-row"><input id="memAdd" placeholder="Adicionar memória manual..."><button onclick="manualMem()">Adicionar</button></div>
+            <button class="mc-btn" onclick="clearMem()">Limpar memória</button>
+        </div>
+    </div>
+</aside>
+
+<div class="mn">
+    <div class="hd">
+        <div class="hd-l">
+            <button class="hm" onclick="togSB()">☰</button>
+            <span class="hb">NexusAI<small>v6</small></span>
+        </div>
+        <div class="hd-r">
+            <select class="ms" id="mSel">
+                <option value="claude-3-5-sonnet" selected>Claude 3.5</option>
+                <option value="gpt-4o">GPT-4o</option>
+                <option value="claude-sonnet-4">Claude 4</option>
+                <option value="deepseek-r1">DeepSeek R1</option>
+                <option value="google/gemini-2.5-flash">Gemini 2.5</option>
+                <option value="o4-mini">o4-mini</option>
+            </select>
+            <button class="exp-btn" onclick="expChat()">Exportar</button>
+            <button class="auto-btn" onclick="autoClick()">Auto IA</button>
+            <button class="acc-btn" id="accBtn" onclick="openAcc()">Conta</button>
+            <span class="hs"><span class="hd-dot"></span>Online</span>
+        </div>
+    </div>
+
+    <div class="cc" id="cc">
+        <div class="wel" id="wel">
+            <h2>NexusAI v6</h2>
+            <p>Interface profissional com conta local, imagens, memória controlável, Auto IA e construtores rápidos.</p>
+            <div class="builders"><div class="build" onclick="builder('game')"><b>Monte seu jogo</b><span>GDD, mecânicas, fases e script</span></div><div class="build" onclick="builder('app')"><b>Faça seu aplicativo</b><span>Telas, funções e HTML inicial</span></div><div class="build" onclick="builder('site')"><b>Crie seu site</b><span>Landing page pronta e refinada</span></div></div>
+            <div class="cmds">
+                <div class="cm"><code>@Nexus</code><span>Chama a IA no chat online</span></div>
+                <div class="cm"><code>/refinar</code><span>Loop inteligente que adiciona funcionalidades</span></div>
+                <div class="cm"><code>/web</code><span>Pesquisa na web</span></div>
+                <div class="cm"><code>/debug</code><span>Encontra erros em código</span></div>
+                <div class="cm"><code>/debate</code><span>IA debate consigo mesma</span></div>
+                <div class="cm"><code>/html</code><span>Gera e executa HTML ao vivo</span></div>
+                <div class="cm"><code>/resumir</code><span>Resume texto grande em pontos importantes</span></div>
+                <div class="cm"><code>/traduzir</code><span>Traduz mantendo sentido e estilo</span></div>
+                <div class="cm"><code>/ideias</code><span>Cria ideias novas para jogos, apps e projetos</span></div>
+                <div class="cm"><code>/plano</code><span>Transforma um objetivo em plano passo a passo</span></div>
+                <div class="cm"><code>/quiz</code><span>Gera perguntas com respostas</span></div>
+                <div class="cm"><code>/auto</code><span>A IA conversa com ela mesma e cria sozinha</span></div>
+            </div>
+            <div class="chain-hint">Agora dá para combinar comandos: <code>/refinar /html faça um jogo</code>, <code>/refinar /debug código</code> ou <code>/refinar /plano minha ideia</code>.</div>
+            <div class="sgs">
+                <div class="sg" onclick="qk('/refinar /html Crie um mini jogo de nave espacial')"><b>/refinar + /html</b><span>HTML melhorado automaticamente</span></div>
+                <div class="sg" onclick="autoClick()"><b>Auto IA</b><span>Você dá a ideia inicial e ela continua sozinha</span></div>
+                <div class="sg" onclick="qk('/ideias jogo de terror no Roblox')"><b>/ideias</b><span>Gerar ideias novas</span></div>
+                <div class="sg" onclick="qk('/quiz programação básica')"><b>/quiz</b><span>Criar perguntas</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ia">
+        <div class="img-strip" id="imgStrip"></div>
+        <div class="iw">
+            <button class="attach-btn" onclick="document.getElementById('imgIn').click()" title="Anexar imagem">＋</button><input type="file" id="imgIn" accept="image/*" multiple hidden onchange="handleImgs(this.files)">
+            <div class="ib"><textarea id="inp" rows="1" placeholder="Mensagem, @Nexus, /refinar /html, /auto..." onkeydown="hk(event)" oninput="ar(this)"></textarea></div>
+            <button class="sb2" id="sBtn" onclick="go()">↑</button>
+        </div>
+        <div class="if"><span id="mLbl">claude-3-5-sonnet</span><span><button class="auto-btn" onclick="autoClick()">Auto criar</button><button class="cb" onclick="newChat()">Novo chat</button></span></div>
+    </div>
+</div>
+
+<div class="modal" id="accModal">
+    <div class="card">
+        <div class="card-h"><b>Cadastro de conta local</b><button onclick="closeAcc()">✕</button></div>
+        <div class="card-b">
+            <label>Nome</label><input id="accName" placeholder="Seu nome">
+            <label>E-mail</label><input id="accEmail" type="email" placeholder="email@exemplo.com">
+            <label>Senha</label><input id="accPass" type="password" placeholder="Senha local">
+            <small>Conta salva somente neste navegador via localStorage. Não é login em servidor.</small>
+            <div class="card-actions"><button onclick="saveAccLocal()">Salvar conta</button><button class="ghost" onclick="logoutAcc()">Sair</button></div>
+        </div>
+    </div>
+</div>
+
+<script src="js/script.js"></script>
+</body>
+</html>
